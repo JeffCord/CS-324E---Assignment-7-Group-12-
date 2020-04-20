@@ -4,7 +4,6 @@ class Player {
   boolean shooting = false;
   int laserRechargeTime = 20;
   int laserRecharge = 0;
-  PVector [] vects = new PVector[5];
 
   Player() {
     ship = loadImage("Player.png");
