@@ -2,33 +2,43 @@ void setup() {
   size(800, 800);
   background(0);
   p1 = new Player();
+  laserSound = new SoundFile(this, "laser1.wav");
+  laserSound.amp(0.1);
 }
 
-boolean finished = false;
+// audio
+import processing.sound.*;
+SoundFile laserSound;
+boolean gameFinished = false;
 Player p1;
-PlayerLaser [] pLasers = new PlayerLaser [3];
+PlayerLaser [] pLasers = new PlayerLaser [8];
 int laserIdx = 0;
 
 void draw() {
-  if (!finished) {
+  if (!gameFinished) {
     background(0);
 
     displayPlayerLasers();
 
     p1.update();
     p1.display();
-  }
+  } 
 }
 
+// draws any laser the player has recently shot
 void displayPlayerLasers() {
   for (int i = 0; i < pLasers.length; i++) {
-    if (pLasers[i] != null) {
-      pLasers[i].update();
-
-      if (pLasers[i].x >= width + (pLasers[i].w / 2) ) {
-        pLasers[i] = null;
+    PlayerLaser cur = pLasers[i];
+    if (cur == null) {
+      laserIdx = i;
+      break;
+    } else {
+      cur.update();
+      if (cur.x >= width + (cur.w / 2)) {
+        cur = null;
+        laserIdx = i;
       } else {
-        pLasers[i].display();
+        cur.display();
       }
     }
   }
