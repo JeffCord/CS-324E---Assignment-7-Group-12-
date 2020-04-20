@@ -2,8 +2,9 @@ class Player {
   PImage ship;
   float x, y, xSpeed, ySpeed;
   boolean shooting = false;
-  int cooldownTime = 10;
-  int cooldown = 0;
+  int laserRechargeTime = 20;
+  int laserRecharge = 0;
+  PVector [] vects = new PVector[5];
 
   Player() {
     ship = loadImage("Player.png");
@@ -14,13 +15,12 @@ class Player {
   }
 
   void update() {
+    imageMode(CENTER);
     if (keyPressed) {
       movement();
     }
 
-    if (mousePressed) {
-      shootingBehavior();
-    }
+    shootingBehavior();
   }
 
   void movement() {
@@ -30,20 +30,31 @@ class Player {
     } else if (key == 's' || key == 'S') {
       y += ySpeed;
       y = constrain(y, ship.height / 2, height - (ship.height / 2));
+    } else if (key == 'a' || key == 'A') {
+      x -= xSpeed;
+      x = constrain(x, ship.width / 2, ship.width * 2.5);
+    } else if (key == 'd' || key == 'D') {
+      x += xSpeed;
+      x = constrain(x, ship.width / 2, ship.width * 2.5);
     }
+    
+    
   }
+
 
   void shootingBehavior() {
     if (!shooting) {
-      // instantiate a new player laser at the player's current position
-      PlayerLaser newLaser = new PlayerLaser(x, y);
-      pLasers[laserIdx] = newLaser;
-      shooting = true;
-      laserSound.play();
+      if (mousePressed && mouseButton == LEFT) {
+        // instantiate a new player laser at the player's current position
+        PlayerLaser newLaser = new PlayerLaser(x, y);
+        pLasers[laserIdx] = newLaser;
+        shooting = true;
+        laserSound.play();
+      }
     } else {
-      cooldown ++;
-      if (cooldown >= cooldownTime) {
-        cooldown = 0;
+      laserRecharge ++;
+      if (laserRecharge >= laserRechargeTime) {
+        laserRecharge = 0;
         shooting = false;
       }
     }
@@ -53,5 +64,4 @@ class Player {
     imageMode(CENTER);
     image(ship, x, y);
   }
-  
 }

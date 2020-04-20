@@ -1,5 +1,5 @@
 void setup() {
-  size(800, 800);
+  size(1000, 800);
   background(0);
   p1 = new Player();
   laserSound = new SoundFile(this, "laser1.wav");
