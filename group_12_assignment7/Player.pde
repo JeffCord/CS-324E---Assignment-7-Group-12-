@@ -1,12 +1,15 @@
 class Player {
   PImage ship;
+  PImage damagedShip;
   float x, y, xSpeed, ySpeed;
   boolean shooting = false;
   int laserRechargeTime = 20;
   int laserRecharge = 0;
+  boolean damaged = false;
 
   Player() {
     ship = loadImage("Player.png");
+    damagedShip = loadImage("Player_damaged.png");
     x = width * 0.08;
     y = height/2;
     xSpeed = 5;
@@ -36,8 +39,6 @@ class Player {
       x += xSpeed;
       x = constrain(x, ship.width / 2, ship.width * 2.5);
     }
-    
-    
   }
 
 
@@ -61,6 +62,10 @@ class Player {
 
   void display() {
     imageMode(CENTER);
-    image(ship, x, y);
+    if (!damaged) {
+      image(ship, x, y);
+    } else if (damaged) {
+      image(damagedShip, x, y);
+    }
   }
 }
