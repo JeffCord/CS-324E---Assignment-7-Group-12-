@@ -10,57 +10,101 @@ int enemy_speed = -2;
 
 
 void setup() {
-  
-  size(800,800);
+  //<<<<<<< HEAD
+
+  size(1000, 800);
   background(0);
   colorMode(HSB);
-  
+
   // future explosion sprite array
   for (int i = 0; i < explosion.length; i++) {
-   String imageName = "explode-" + nf(i+1,2) + ".png";;
-   explosion[i] = loadImage(imageName);
+    String imageName = "explode-" + nf(i+1, 2) + ".png";
+    explosion[i] = loadImage(imageName);
   } 
-  
+
   // alien image array
   for (int i = 0; i < aliens.length; i++) {
-   String imageName = "Alien_Enemy_" + nf(i+1,2) + ".png";;
-   aliens[i] = loadImage(imageName);
+    String imageName = "Alien_Enemy_" + nf(i+1, 2) + ".png";
+    aliens[i] = loadImage(imageName);
   }
-  
-  enemies[0] = new Enemy(900,random(30,700),200,enemy_speed,aliens[0]);
-  
+
+  enemies[0] = new Enemy(900, random(30, 700), 200, enemy_speed, aliens[0]);
+
+  //=======
+
+  p1 = new Player();
+  laserSound = new SoundFile(this, "laser1.wav");
+  laserSound.amp(0.1);
+  //>>>>>>> master
 }
 
+// audio
+import processing.sound.*;
+SoundFile laserSound;
+boolean gameFinished = false;
+Player p1;
+PlayerLaser [] pLasers = new PlayerLaser [8];
+int laserIdx = 0;
+
 void draw() {
-  background(0);
-  
-  // temporary stop at 30 seconds
-  if (frameCount == 1800) {
-   exit(); 
+  //<<<<<<< HEAD
+  if (!gameFinished) {
+    background(0);
+
+    // temporary stop at 30 seconds
+    if (frameCount == 1800) {
+      exit();
+    }
+
+    // increases frequency of enemy spawn every 2 seconds
+    if (frameCount % 120 == 0 && difficulty > 10) {
+      difficulty -= difficulty_increase;
+    }
+
+    // spawns an enemy in an enemy array
+    if (frameCount % difficulty == 0) {
+      int index = int(random(aliens.length));
+      enemies[enemy_index] = new Enemy(900, random(30, 700), 200, enemy_speed, aliens[index]);
+      enemy_index += 1;
+    }
+
+    // checks enemy array for enemies in bounds and displays
+    // deletes enemies if they are off screen to save memory
+    for (int i = 0; i < enemies.length; i++) {
+      if (enemies[i] != null) {
+        enemies[i].display();
+        if (enemies[i].location.x < -50) {
+          enemies[i] = null;
+        }
+      }
+    } 
+    //=======
+
+      background(0);
+
+    displayPlayerLasers();
+
+    p1.update();
+    p1.display();
   }
-  
-  // increases frequency of enemy spawn every 2 seconds
-  if (frameCount % 120 == 0 && difficulty > 10) {
-    difficulty -= difficulty_increase;
-  }
-  
-  // spawns an enemy in an enemy array
-  if (frameCount % difficulty == 0) {
-    int index = int(random(aliens.length));
-    enemies[enemy_index] = new Enemy(900,random(30,700),200,enemy_speed,aliens[index]);
-    enemy_index += 1;
-  }
-  
-  // checks enemy array for enemies in bounds and displays
-  // deletes enemies if they are off screen to save memory
-  for (int i = 0; i < enemies.length; i++) {
-    if (enemies[i] != null) {
-      enemies[i].display();
-      if (enemies[i].location.x < -50) {
-        enemies[i] = null; 
+}
+
+// draws any laser the player has recently shot
+void displayPlayerLasers() {
+  for (int i = 0; i < pLasers.length; i++) {
+    PlayerLaser cur = pLasers[i];
+    if (cur == null) {
+      laserIdx = i;
+      break;
+    } else {
+      cur.update();
+      if (cur.x >= width + (cur.w / 2)) {
+        cur = null;
+        laserIdx = i;
+      } else {
+        cur.display();
       }
     }
-  } 
+  }
+  //>>>>>>> master
 }
-  
-  
