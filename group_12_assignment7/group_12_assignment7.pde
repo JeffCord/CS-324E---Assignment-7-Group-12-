@@ -10,8 +10,6 @@ int enemy_speed = -2;
 
 
 void setup() {
-  //<<<<<<< HEAD
-
   size(1000, 800);
   background(0);
   colorMode(HSB);
@@ -30,12 +28,9 @@ void setup() {
 
   enemies[0] = new Enemy(900, random(30, 700), 200, enemy_speed, aliens[0]);
 
-  //=======
-
   p1 = new Player();
   laserSound = new SoundFile(this, "laser1.wav");
   laserSound.amp(0.1);
-  //>>>>>>> master
 }
 
 // audio
@@ -47,7 +42,6 @@ PlayerLaser [] pLasers = new PlayerLaser [8];
 int laserIdx = 0;
 
 void draw() {
-  //<<<<<<< HEAD
   if (!gameFinished) {
     background(0);
 
@@ -78,9 +72,6 @@ void draw() {
         }
       }
     } 
-    //=======
-
-      background(0);
 
     displayPlayerLasers();
 
