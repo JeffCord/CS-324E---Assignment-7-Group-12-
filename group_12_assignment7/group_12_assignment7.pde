@@ -52,7 +52,7 @@ void draw() {
   background(0);
   
   
-  // temporary stop at 30 seconds
+  // temporary stop at 1 minute
   if (frameCount == 3600) {
    exit(); 
   }
@@ -93,6 +93,9 @@ void draw() {
       if (enemies[i].location.x < -50) {
         enemies[i].location.x = width + 100;
         enemies[i].location.y = random(30,height - 100);
+      }
+      if (dist(enemies[i].location.x, enemies[i].location.y, p1.x, p1.y) <= enemies[i].radius/enemyHitBoxTightness) {
+        exit();
       }
     }
   }
