@@ -1,22 +1,23 @@
-class Explode_Timer extends Enemy {
+class Explode_Timer {
   int animationTimer;
   int animationTimerValue;
   int currentFrame;
-
+  float x,y;
   
-  Explode_Timer(float x, float y, float radius, float speed, PImage alien, int animationTimer,int animationTimerValue, int currentFrame){
-    super(x,y,radius,speed,alien);
+  Explode_Timer(int animationTimer,int animationTimerValue, int currentFrame,float x, float y){
     this.animationTimer = animationTimer;
     this.animationTimerValue = animationTimerValue;
     this.currentFrame = currentFrame;
+    this.x = x;
+    this.y = y;
   }
   
-void display() {
+void display(int currentFrame) {
   
-  image(explosion[currentFrame], location.x, location.y);
-  if ((millis() - animationTimer) >= animationTimerValue) {
-    currentFrame = (currentFrame + 1) % numFrames;
-    animationTimer = millis();
-  }  
-}
+   image(explosion[currentFrame], x, y);
+    if ((millis() - animationTimer) >= animationTimerValue) {
+      currentFrame = (currentFrame + 1) % numFrames;
+      animationTimer = millis();
+    }  
+  }
 }

@@ -4,7 +4,7 @@ class Enemy {
   PVector location;
   PVector velocity;
   PImage alien;
-  boolean explode;
+  boolean explode, over, clicked;
   
   Enemy(float x, float y, float radius, float speed, PImage alien) {
    this.x = x;
@@ -25,10 +25,19 @@ class Enemy {
     image(alien,location.x,location.y,radius,radius - radius*.4);
     location.add(velocity); 
     }
-  
-  void explode() {
     
-    
+  void isOver() {
+    if (dist(mouseX,mouseY,location.x,location.y) <= (radius/2)) {
+      over = true;
+  } else {
+      over = false;
+  }
+  }
+ 
+  void isClicked() {
+    if (over == true && mousePressed ) {
+     clicked = true;
+    }
   }
   
 }
