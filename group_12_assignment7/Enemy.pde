@@ -26,6 +26,10 @@ class Enemy {
     location.add(velocity); 
     }
     
+  void speedUpdate(float enemySpeed) { 
+    velocity = new PVector(enemySpeed,0);
+  }
+    
   void isOver() {
     if (dist(mouseX,mouseY,location.x,location.y) <= (radius/2)) {
       over = true;
