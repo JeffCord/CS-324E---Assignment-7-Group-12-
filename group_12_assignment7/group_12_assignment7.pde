@@ -56,66 +56,73 @@ void setup() {
 }
 
 void draw() {
-  background(0);
-  timer_draw();
-  point_draw();
-  life_draw();
-
-  // temporary stop at 1 minute
-  if (frameCount == 3600) {
-    exit();
-  }
-
-  // increases frequency of enemy spawn every 2 seconds
-  if (frameCount % difficultyFrequency == 0) {
-    enemySpeed += enemySpeedIncrease;
-    if (difficulty > difficultyIncrease) {
-      difficulty -= difficultyIncrease;
+  if (!gameFinished) {
+    background(0);
+    timer_draw();
+    point_draw();
+    life_draw();
+  
+    // temporary stop at 1 minute
+    if (frameCount == 3600) {
+      gameFinished = true;
     }
-  }
-
-  // spawns an enemy in an enemy array
-  if (frameCount % difficulty == 0 && enemyIndex < (maxEnemies-1)) {
-    int index = int(random(aliens.length));
-    enemies[enemyIndex] = new Enemy(width + 100, random(30, height - 100), alienSize, enemySpeed, aliens[index]); 
-    {
-      enemyIndex += 1;
+  
+    // increases frequency of enemy spawn every 2 seconds
+    if (frameCount % difficultyFrequency == 0) {
+      enemySpeed += enemySpeedIncrease;
+      if (difficulty > difficultyIncrease) {
+        difficulty -= difficultyIncrease;
+      }
     }
-  }
-
-  // checks enemy array for enemies in bounds and displays
-  // reuses enemies if they are off screen to save memory
-  for (int i = 0; i < enemies.length; i++) {
-    if (enemies[i] != null) {
-      enemies[i].display();
-      enemies[i].speedUpdate(enemySpeed);
-      for (int j = 0; j < pLasers.length; j++) {
-        if (pLasers[j] != null) {
-          if (dist(enemies[i].location.x, enemies[i].location.y, pLasers[j].x, pLasers[j].y) <= enemies[i].radius/enemyHitBoxTightness) {
-            Explode_Timer gif = new Explode_Timer(0, 50, 0, enemies[i].location.x, enemies[i].location.y);
-            gif.display(j);
-            points += 1; //win a point 
-            enemies[i].location.x = width + 100;
-            enemies[i].location.y = random(30, height - 100);
-            pLasers[j] = null;
+  
+    // spawns an enemy in an enemy array
+    if (frameCount % difficulty == 0 && enemyIndex < (maxEnemies-1)) {
+      int index = int(random(aliens.length));
+      enemies[enemyIndex] = new Enemy(width + 100, random(30, height - 100), alienSize, enemySpeed, aliens[index]); 
+      {
+        enemyIndex += 1;
+      }
+    }
+  
+    // checks enemy array for enemies in bounds and displays
+    // reuses enemies if they are off screen to save memory
+    for (int i = 0; i < enemies.length; i++) {
+      if (enemies[i] != null) {
+        enemies[i].display();
+        enemies[i].speedUpdate(enemySpeed);
+        for (int j = 0; j < pLasers.length; j++) {
+          if (pLasers[j] != null) {
+            if (dist(enemies[i].location.x, enemies[i].location.y, pLasers[j].x, pLasers[j].y) <= enemies[i].radius/enemyHitBoxTightness) {
+              Explode_Timer gif = new Explode_Timer(0, 50, 0, enemies[i].location.x, enemies[i].location.y);
+              gif.display(j);
+              points += 1; //win a point 
+              enemies[i].location.x = width + 100;
+              enemies[i].location.y = random(30, height - 100);
+              pLasers[j] = null;
+            }
           }
         }
-      }
-      if (enemies[i].location.x < -50) {
-        enemies[i].location.x = width + 100;
-        enemies[i].location.y = random(30, height - 100);
-      }
-      if (dist(enemies[i].location.x, enemies[i].location.y, p1.x, p1.y) <= enemies[i].radius/enemyHitBoxTightness) {
-        life -= 1;
-        exit();
+        if (enemies[i].location.x < -50) {
+          enemies[i].location.x = width + 100;
+          enemies[i].location.y = random(30, height - 100);
+        }
+        if (dist(enemies[i].location.x, enemies[i].location.y, p1.x, p1.y) <= enemies[i].radius/enemyHitBoxTightness) {
+          life -= 1;
+          exit();
+        }
       }
     }
+  
+    displayPlayerLasers();
+  
+    p1.update();
+    p1.display();
+  } else {
+    background(#FFBE08);
+    textAlign(CENTER);
+    fill(0);
+    text("You win!", width/2, height/2);
   }
-
-  displayPlayerLasers();
-
-  p1.update();
-  p1.display();
 }
 
 // draws any laser the player has recently shot
