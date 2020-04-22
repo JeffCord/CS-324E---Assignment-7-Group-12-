@@ -23,7 +23,11 @@ int life = 3;
 // audio
 import processing.sound.*;
 SoundFile laserSound;
+
+//game states
 boolean gameFinished = false;
+boolean playerLost = false;
+
 Player p1;
 PlayerLaser [] pLasers = new PlayerLaser [8];
 int laserIdx = 0;
@@ -56,7 +60,12 @@ void setup() {
 }
 
 void draw() {
-  if (!gameFinished) {
+  if (playerLost) {
+    background(#FF08B9);
+    textAlign(CENTER);
+    fill(0);
+    text("Oh no! The aliens have destroyed your ship!\n\nGame Over", width/2, height/2);
+  } else if (!gameFinished) {
     background(0);
     timer_draw();
     point_draw();
@@ -108,7 +117,10 @@ void draw() {
         }
         if (dist(enemies[i].location.x, enemies[i].location.y, p1.x, p1.y) <= enemies[i].radius/enemyHitBoxTightness) {
           life -= 1;
-          exit();
+          //exit();
+          if (life == 0) {
+            playerLost = true;
+          }
         }
       }
     }
@@ -117,12 +129,12 @@ void draw() {
   
     p1.update();
     p1.display();
-  } else {
+  } else if (gameFinished) {
     background(#FFBE08);
     textAlign(CENTER);
     fill(0);
-    text("You win!", width/2, height/2);
-  }
+    text("You win!\nYour score was " + points + "!", width/2, height/2);
+  } 
 }
 
 // draws any laser the player has recently shot
