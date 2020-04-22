@@ -15,6 +15,11 @@ PImage[] aliens = new PImage[2];
 int numFrames = 11;
 PImage[]  explosion = new PImage[numFrames];
 
+int timer_start;
+int points = 0;
+int life = 3;
+
+
 // audio
 import processing.sound.*;
 SoundFile laserSound;
@@ -28,6 +33,8 @@ void setup() {
   size(1000, 800);
   background(0);
   colorMode(HSB);
+  timer_start = millis();
+
 
   // future explosion sprite array
   for (int i = 0; i < explosion.length; i++) {
@@ -50,29 +57,32 @@ void setup() {
 
 void draw() {
   background(0);
-  
-  
+  timer_draw();
+  point_draw();
+  life_draw();
+
   // temporary stop at 1 minute
   if (frameCount == 3600) {
-   exit(); 
+    exit();
   }
-  
+
   // increases frequency of enemy spawn every 2 seconds
   if (frameCount % difficultyFrequency == 0) {
     enemySpeed += enemySpeedIncrease;
     if (difficulty > difficultyIncrease) {
-    difficulty -= difficultyIncrease;
+      difficulty -= difficultyIncrease;
     }
   }
-  
+
   // spawns an enemy in an enemy array
   if (frameCount % difficulty == 0 && enemyIndex < (maxEnemies-1)) {
     int index = int(random(aliens.length));
-    enemies[enemyIndex] = new Enemy(width + 100,random(30,height - 100),alienSize,enemySpeed,aliens[index]); {
-    enemyIndex += 1;
+    enemies[enemyIndex] = new Enemy(width + 100, random(30, height - 100), alienSize, enemySpeed, aliens[index]); 
+    {
+      enemyIndex += 1;
     }
   }
-  
+
   // checks enemy array for enemies in bounds and displays
   // reuses enemies if they are off screen to save memory
   for (int i = 0; i < enemies.length; i++) {
@@ -82,28 +92,30 @@ void draw() {
       for (int j = 0; j < pLasers.length; j++) {
         if (pLasers[j] != null) {
           if (dist(enemies[i].location.x, enemies[i].location.y, pLasers[j].x, pLasers[j].y) <= enemies[i].radius/enemyHitBoxTightness) {
-           Explode_Timer gif = new Explode_Timer(0,50,0,enemies[i].location.x,enemies[i].location.y);
-           gif.display(j);
-           enemies[i].location.x = width + 100;
-           enemies[i].location.y = random(30,height - 100);
-           pLasers[j] = null;
-         }
+            Explode_Timer gif = new Explode_Timer(0, 50, 0, enemies[i].location.x, enemies[i].location.y);
+            gif.display(j);
+            points += 1; //win a point 
+            enemies[i].location.x = width + 100;
+            enemies[i].location.y = random(30, height - 100);
+            pLasers[j] = null;
+          }
         }
       }
       if (enemies[i].location.x < -50) {
         enemies[i].location.x = width + 100;
-        enemies[i].location.y = random(30,height - 100);
+        enemies[i].location.y = random(30, height - 100);
       }
       if (dist(enemies[i].location.x, enemies[i].location.y, p1.x, p1.y) <= enemies[i].radius/enemyHitBoxTightness) {
+        life -= 1;
         exit();
       }
     }
   }
 
-    displayPlayerLasers();
+  displayPlayerLasers();
 
-    p1.update();
-    p1.display();
+  p1.update();
+  p1.display();
 }
 
 // draws any laser the player has recently shot
@@ -123,4 +135,35 @@ void displayPlayerLasers() {
       }
     }
   }
+}
+
+
+//diaplay playing time
+void timer_draw() {
+  fill(100, 255, 255);
+  textSize(40);
+  text( ( millis() - timer_start ) / 1000, 20, 40 );
+}
+
+//display points
+void point_draw() {
+  fill(255, 255, 255);
+  textSize(40);
+  text("Point:" + points, 400, 40);
+}
+
+//display # of lives
+void life_draw() {
+  fill(100, 255, 255);
+  textSize(40);
+  text("Life:" + life, 850, 40);
+}
+
+void keyPressed() {
+  final int k = keyCode;
+
+  //press space to pause the game
+  if (k == ' ')
+    if (looping)  noLoop();
+    else          loop();
 }
