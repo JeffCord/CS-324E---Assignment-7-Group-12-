@@ -8,6 +8,10 @@ float enemySpeedIncrease = -.5;
 int difficultyFrequency = 120;
 int alienSize = 200;
 
+boolean vulnerability = true;
+int vulnerabiltyDuration = 60;
+int vulnerabilityCounter = 0;
+
 Enemy[] enemies = new Enemy[maxEnemies];
 PImage[] aliens = new PImage[2];
 
@@ -117,13 +121,20 @@ void draw() {
           enemies[i].location.x = width + 100;
           enemies[i].location.y = random(30, height - 100);
         }
-        if (dist(enemies[i].location.x, enemies[i].location.y, p1.x, p1.y) <= enemies[i].radius/enemyHitBoxTightness) {
+        if (dist(enemies[i].location.x, enemies[i].location.y, p1.x, p1.y) <= enemies[i].radius/enemyHitBoxTightness && vulnerability == true) {
           life -= 1;
-          //exit();
+          vulnerability = false;
           if (life == 0) {
             playerLost = true;
           }
         }
+      }
+    }
+    if (vulnerability == false) {
+      vulnerabilityCounter += 1;
+      if (vulnerabilityCounter == vulnerabiltyDuration) {
+        vulnerability = true;
+        vulnerabilityCounter = 0;
       }
     }
 
