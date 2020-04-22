@@ -27,6 +27,8 @@ SoundFile laserSound;
 //game states
 boolean gameFinished = false;
 boolean playerLost = false;
+boolean paused = false;
+boolean pausePressable = true;
 
 Player p1;
 PlayerLaser [] pLasers = new PlayerLaser [8];
@@ -70,12 +72,12 @@ void draw() {
     timer_draw();
     point_draw();
     life_draw();
-  
+
     // temporary stop at 1 minute
     if (frameCount == 3600) {
       gameFinished = true;
     }
-  
+
     // increases frequency of enemy spawn every 2 seconds
     if (frameCount % difficultyFrequency == 0) {
       enemySpeed += enemySpeedIncrease;
@@ -83,7 +85,7 @@ void draw() {
         difficulty -= difficultyIncrease;
       }
     }
-  
+
     // spawns an enemy in an enemy array
     if (frameCount % difficulty == 0 && enemyIndex < (maxEnemies-1)) {
       int index = int(random(aliens.length));
@@ -92,7 +94,7 @@ void draw() {
         enemyIndex += 1;
       }
     }
-  
+
     // checks enemy array for enemies in bounds and displays
     // reuses enemies if they are off screen to save memory
     for (int i = 0; i < enemies.length; i++) {
@@ -124,9 +126,9 @@ void draw() {
         }
       }
     }
-  
+
     displayPlayerLasers();
-  
+
     p1.update();
     p1.display();
   } else if (gameFinished) {
@@ -134,7 +136,7 @@ void draw() {
     textAlign(CENTER);
     fill(0);
     text("You win!\nYour score was " + points + "!", width/2, height/2);
-  } 
+  }
 }
 
 // draws any laser the player has recently shot
@@ -182,7 +184,19 @@ void keyPressed() {
   final int k = keyCode;
 
   //press space to pause the game
-  if (k == ' ')
-    if (looping)  noLoop();
-    else          loop();
+  if (k == ' ' && pausePressable) {
+    paused = !paused;
+    pausePressable = false;
+  }
+  
+  if (paused) {
+    noLoop();
+
+  } else {
+    loop();
+  }
+}
+
+void keyReleased() {
+  pausePressable = true;
 }
