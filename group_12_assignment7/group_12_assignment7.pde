@@ -22,7 +22,6 @@ int timer_start;
 int points = 0;
 int life = 3;
 
-
 // audio
 import processing.sound.*;
 SoundFile laserSound;
@@ -160,11 +159,11 @@ void draw() {
 
 // draws any laser the player has recently shot
 void displayPlayerLasers() {
-  for (int i = 0; i < pLasers.length; i++) {
+  for (int i = 7; i >= 0; i--) {
     PlayerLaser cur = pLasers[i];
     if (cur == null) {
       laserIdx = i;
-      break;
+      //break;
     } else {
       cur.update();
       if (cur.x >= width + (cur.w / 2)) {
@@ -177,8 +176,7 @@ void displayPlayerLasers() {
   }
 }
 
-
-//diaplay playing time
+//display playing time
 void timer_draw() {
   fill(100, 255, 255);
   textSize(40);

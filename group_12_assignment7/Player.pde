@@ -1,6 +1,7 @@
 class Player {
   PImage ship;
-  PImage damagedShip;
+  PImage damagedShip1;
+  PImage damagedShip2;
   float x, y, xSpeed, ySpeed;
   boolean blinkOn = false;
 
@@ -19,11 +20,10 @@ class Player {
   float maxAlpha = 150;
   float shieldAlpha = maxAlpha;
 
-  //float alphaDecRate = 1.0 * shieldAlpha / shieldHoldLimit;
-
   Player() {
     ship = loadImage("Player.png");
-    damagedShip = loadImage("Player_damaged.png");
+    damagedShip1 = loadImage("Player_damaged_1.png");
+    damagedShip2 = loadImage("Player_damaged_2.png");
     x = width * 0.08;
     y = height/2;
     xSpeed = 5;
@@ -79,8 +79,7 @@ class Player {
       if (mousePressed) {
         if (mouseButton == LEFT) {
           // instantiate a new player laser at the player's current position
-          PlayerLaser newLaser = new PlayerLaser(x, y);
-          pLasers[laserIdx] = newLaser;
+          pLasers[laserIdx] = new PlayerLaser(x, y);
           shooting = true;
           laserSound.play();
         }
@@ -123,9 +122,9 @@ class Player {
       }
       
       if (blinkOn) {
-        image(damagedShip, x, y);
+        image(damagedShip1, x, y);
       } else {
-        image(ship, x, y);
+        image(damagedShip2, x, y);
       }
     }
   }
