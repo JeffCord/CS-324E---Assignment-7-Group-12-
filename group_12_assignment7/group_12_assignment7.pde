@@ -35,12 +35,12 @@ boolean paused = false;
 boolean pausePressable = true;
 
 Player p1;
-PlayerLaser [] pLasers = new PlayerLaser [8];
+int numLasers = 8;
+PlayerLaser [] pLasers = new PlayerLaser [numLasers];
 int laserIdx = 0;
 
 int frameNum = 0;
 int timeLimit = 3600;
-
 
 void setup() {
   size(1000, 800);
@@ -99,7 +99,7 @@ void draw() {
       enemies[enemyIndex] = new Enemy(width + 100, random(30, height - 100), alienSize, enemySpeed, aliens[index]);
       enemyIndex += 1;
     }
-
+  
     // checks enemy array for enemies in bounds and displays
     // reuses enemies if they are off screen to save memory
     for (int i = 0; i < enemies.length; i++) {
@@ -111,7 +111,7 @@ void draw() {
             if (dist(enemies[i].location.x, enemies[i].location.y, pLasers[j].x, pLasers[j].y) <= enemies[i].radius/enemyHitBoxTightness) {
               Explode_Timer gif = new Explode_Timer(0, 50, 0, enemies[i].location.x, enemies[i].location.y);
               gif.display(j);
-              points += 1; //win a point 
+              points += 1; // win a point 
               enemies[i].location.x = width + 100;
               enemies[i].location.y = random(30, height - 100);
               pLasers[j] = null;
@@ -166,7 +166,7 @@ void draw() {
 
 // draws any laser the player has recently shot
 void displayPlayerLasers() {
-  for (int i = 7; i >= 0; i--) {
+  for (int i = numLasers - 1; i >= 0; i--) {
     PlayerLaser cur = pLasers[i];
     if (cur == null) {
       laserIdx = i;
