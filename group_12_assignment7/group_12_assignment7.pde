@@ -25,6 +25,8 @@ int life = 3;
 // audio
 import processing.sound.*;
 SoundFile laserSound;
+SoundFile playerHitSound;
+SoundFile alienHitSound;
 
 //game states
 boolean gameFinished = false;
@@ -46,7 +48,6 @@ void setup() {
   colorMode(HSB);
   timer_start = 0;
 
-
   // future explosion sprite array
   for (int i = 0; i < explosion.length; i++) {
     String imageName = "explode-" + nf(i+1, 2) + ".png";
@@ -64,6 +65,10 @@ void setup() {
   p1 = new Player();
   laserSound = new SoundFile(this, "laser1.wav");
   laserSound.amp(0.1);
+  playerHitSound = new SoundFile(this, "playerHit.wav");
+  playerHitSound.amp(0.25);
+  alienHitSound = new SoundFile(this, "alienHit.wav");
+  alienHitSound.amp(0.25);
 }
 
 void draw() {
@@ -110,6 +115,7 @@ void draw() {
               enemies[i].location.x = width + 100;
               enemies[i].location.y = random(30, height - 100);
               pLasers[j] = null;
+              alienHitSound.play();
             }
           }
         }
@@ -121,6 +127,7 @@ void draw() {
           if (dist(enemies[i].location.x, enemies[i].location.y, p1.x, p1.y) <= enemies[i].radius/enemyHitBoxTightness && !p1.damaged) {
             life -= 1;
             p1.damaged = true;
+            playerHitSound.play();
             if (life == 0) {
               playerLost = true;
             }
