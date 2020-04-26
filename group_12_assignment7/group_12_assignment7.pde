@@ -1,6 +1,6 @@
 int maxEnemies = 10;
 int difficulty = 120;
-int difficultyIncrease = 10;
+int difficultyIncrease = 20;
 int enemyIndex = 1;
 int enemyHitBoxTightness = 3;
 float enemySpeed = -2;
@@ -14,6 +14,7 @@ int vulnerabilityCounter = 0;
 Enemy[] enemies = new Enemy[maxEnemies];
 PImage[] aliens = new PImage[2];
 
+PImage backgroundImage;
 
 int numFrames = 11;
 PImage[]  explosion = new PImage[numFrames];
@@ -44,9 +45,12 @@ int timeLimit = 3600;
 
 void setup() {
   size(1000, 800);
-  background(0);
+  //background(0);
   colorMode(HSB);
   timer_start = 0;
+  
+  backgroundImage = loadImage("star_background.jpg");
+  backgroundImage.resize(width, height);
 
   // future explosion sprite array
   for (int i = 0; i < explosion.length; i++) {
@@ -72,13 +76,17 @@ void setup() {
 }
 
 void draw() {
+  
+  
+  
   if (playerLost) {
     background(#FF08B9);
     textAlign(CENTER);
     fill(0);
     text("Oh no! The aliens have destroyed your ship!\n\nGame Over", width/2, height/2);
   } else if (!gameFinished) {
-    background(0);
+    background(backgroundImage);
+    //background(0);
 
     // temporary stop at 1 minute
     if (frameNum == timeLimit) {
