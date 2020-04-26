@@ -8,8 +8,7 @@ float enemySpeedIncrease = -.5;
 int difficultyFrequency = 120;
 int alienSize = 200;
 
-boolean vulnerability = true;
-int vulnerabiltyDuration = 60;
+int vulnerabiltyDuration = 90;
 int vulnerabilityCounter = 0;
 
 Enemy[] enemies = new Enemy[maxEnemies];
@@ -38,12 +37,15 @@ Player p1;
 PlayerLaser [] pLasers = new PlayerLaser [8];
 int laserIdx = 0;
 
+int frameNum = 0;
+int timeLimit = 3600;
+
 
 void setup() {
   size(1000, 800);
   background(0);
   colorMode(HSB);
-  timer_start = millis();
+  timer_start = 0;
 
 
   // future explosion sprite array
@@ -73,17 +75,14 @@ void draw() {
     text("Oh no! The aliens have destroyed your ship!\n\nGame Over", width/2, height/2);
   } else if (!gameFinished) {
     background(0);
-    timer_draw();
-    point_draw();
-    life_draw();
 
     // temporary stop at 1 minute
-    if (frameCount == 3600) {
+    if (frameNum == timeLimit) {
       gameFinished = true;
     }
 
     // increases frequency of enemy spawn every 2 seconds
-    if (frameCount % difficultyFrequency == 0) {
+    if (frameNum % difficultyFrequency == 0) {
       enemySpeed += enemySpeedIncrease;
       if (difficulty > difficultyIncrease) {
         difficulty -= difficultyIncrease;
@@ -91,12 +90,10 @@ void draw() {
     }
 
     // spawns an enemy in an enemy array
-    if (frameCount % difficulty == 0 && enemyIndex < (maxEnemies-1)) {
+    if (frameNum % difficulty == 0 && enemyIndex < (maxEnemies-1)) {
       int index = int(random(aliens.length));
-      enemies[enemyIndex] = new Enemy(width + 100, random(30, height - 100), alienSize, enemySpeed, aliens[index]); 
-      {
-        enemyIndex += 1;
-      }
+      enemies[enemyIndex] = new Enemy(width + 100, random(30, height - 100), alienSize, enemySpeed, aliens[index]);
+      enemyIndex += 1;
     }
 
     // checks enemy array for enemies in bounds and displays
@@ -121,27 +118,38 @@ void draw() {
           enemies[i].location.x = width + 100;
           enemies[i].location.y = random(30, height - 100);
         }
-        if (dist(enemies[i].location.x, enemies[i].location.y, p1.x, p1.y) <= enemies[i].radius/enemyHitBoxTightness && vulnerability == true) {
-          life -= 1;
-          vulnerability = false;
-          if (life == 0) {
-            playerLost = true;
+        if (!p1.shieldOn) {
+          if (dist(enemies[i].location.x, enemies[i].location.y, p1.x, p1.y) <= enemies[i].radius/enemyHitBoxTightness && !p1.damaged) {
+            life -= 1;
+            p1.damaged = true;
+            if (life == 0) {
+              playerLost = true;
+            }
           }
         }
       }
     }
-    if (vulnerability == false) {
+
+    if (p1.damaged == true) {      
       vulnerabilityCounter += 1;
       if (vulnerabilityCounter == vulnerabiltyDuration) {
-        vulnerability = true;
+        p1.damaged = false;
         vulnerabilityCounter = 0;
       }
+    } 
+
+    if (!paused) {
+      frameNum ++;
     }
 
     displayPlayerLasers();
 
     p1.update();
     p1.display();
+
+    timer_draw();
+    point_draw();
+    life_draw();
   } else if (gameFinished) {
     background(#FFBE08);
     textAlign(CENTER);
@@ -174,7 +182,7 @@ void displayPlayerLasers() {
 void timer_draw() {
   fill(100, 255, 255);
   textSize(40);
-  text( ( millis() - timer_start ) / 1000, 20, 40 );
+  text(frameNum / 60, 20, 40 );
 }
 
 //display points
@@ -199,10 +207,9 @@ void keyPressed() {
     paused = !paused;
     pausePressable = false;
   }
-  
+
   if (paused) {
     noLoop();
-
   } else {
     loop();
   }

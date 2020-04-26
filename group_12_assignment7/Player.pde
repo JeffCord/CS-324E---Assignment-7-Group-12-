@@ -2,10 +2,24 @@ class Player {
   PImage ship;
   PImage damagedShip;
   float x, y, xSpeed, ySpeed;
+  boolean blinkOn = false;
+
   boolean shooting = false;
   int laserRechargeTime = 20;
   int laserRecharge = 0;
+
   boolean damaged = false;
+  boolean shieldOn = false;
+  boolean shieldEmpty = false;
+  int shieldHoldTime = 0; // how long the shield has been held
+  int shieldHoldLimit = 120; // how long a shield can be on
+
+  int shieldRecharge = 0; // how long the shield has been recharging
+  int shieldCooldown = 120; // how many frames it takes to recharge 
+  float maxAlpha = 150;
+  float shieldAlpha = maxAlpha;
+
+  //float alphaDecRate = 1.0 * shieldAlpha / shieldHoldLimit;
 
   Player() {
     ship = loadImage("Player.png");
@@ -22,34 +36,54 @@ class Player {
       movement();
     }
 
-    shootingBehavior();
+    if (!shieldOn) {
+      shieldRecharge = constrain(shieldRecharge + 1, 0, 120);
+      shieldHoldTime = constrain(shieldHoldTime - 1, 0, 120);
+    } else {
+      shieldRecharge = constrain(shieldRecharge - 1, 0, 120);
+    }
+
+    if (shieldEmpty) {
+      if (shieldRecharge >= shieldCooldown) {
+        shieldAlpha = 150;
+        shieldEmpty = false;
+        shieldRecharge = 0;
+        shieldHoldTime = 0;
+      }
+    }
+
+    if (!mousePressed) {
+      shieldOn = false;
+    } else {
+      shieldBehavior();
+
+      if (mouseButton == LEFT) {
+        shootingBehavior();
+        shieldOn = false;
+      }
+    }
+    //println(shieldAlpha);
+    //println(shieldHoldTime, shieldRecharge);
   }
 
   void movement() {
     if (key == 'w' || key == 'W') {
-      y -= ySpeed;
-      y = constrain(y, ship.height / 2, height - (ship.height / 2));
+      y = constrain(y - ySpeed, ship.height / 2, height - (ship.height / 2));
     } else if (key == 's' || key == 'S') {
-      y += ySpeed;
-      y = constrain(y, ship.height / 2, height - (ship.height / 2));
-    } else if (key == 'a' || key == 'A') {
-      x -= xSpeed;
-      x = constrain(x, ship.width / 2, ship.width * 2.5);
-    } else if (key == 'd' || key == 'D') {
-      x += xSpeed;
-      x = constrain(x, ship.width / 2, ship.width * 2.5);
+      y = constrain(y + ySpeed, ship.height / 2, height - (ship.height / 2));
     }
   }
 
-
   void shootingBehavior() {
     if (!shooting) {
-      if (mousePressed && mouseButton == LEFT) {
-        // instantiate a new player laser at the player's current position
-        PlayerLaser newLaser = new PlayerLaser(x, y);
-        pLasers[laserIdx] = newLaser;
-        shooting = true;
-        laserSound.play();
+      if (mousePressed) {
+        if (mouseButton == LEFT) {
+          // instantiate a new player laser at the player's current position
+          PlayerLaser newLaser = new PlayerLaser(x, y);
+          pLasers[laserIdx] = newLaser;
+          shooting = true;
+          laserSound.play();
+        }
       }
     } else {
       laserRecharge ++;
@@ -60,12 +94,39 @@ class Player {
     }
   }
 
+  void shieldBehavior() {
+    if (mouseButton == RIGHT) {
+      if (!shieldEmpty) {
+        shieldHoldTime ++;
+        if (shieldHoldTime >= shieldHoldLimit) {
+          shieldOn = false;
+          shieldEmpty = true;
+          shieldHoldTime = 0;
+        } else {
+          shieldOn = true;
+          fill(#FF4093, shieldAlpha);
+          noStroke();
+          circle(x - 8, y, 145);
+          shieldAlpha = maxAlpha * ((1.0 * shieldHoldLimit - shieldHoldTime) / shieldHoldLimit);
+        }
+      }
+    }
+  }
+
   void display() {
     imageMode(CENTER);
     if (!damaged) {
       image(ship, x, y);
-    } else if (damaged) {
-      image(damagedShip, x, y);
+    } else {
+      if (frameNum % 15 == 0) {
+        blinkOn = !blinkOn;
+      }
+      
+      if (blinkOn) {
+        image(damagedShip, x, y);
+      } else {
+        image(ship, x, y);
+      }
     }
   }
 }
