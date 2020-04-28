@@ -1,0 +1,13 @@
+1. Move up/down with 'w' and 's' keys. 
+
+2. Shoot lasers with left mouse button (click/hold). A sound will be heard for each shot. The laser has a cooldown, so there is a small amount of time between shots that you must wait before shooting again. Use the laser to destroy incoming alien enemies, and you gain 1 point for each alien you destroy. Another sound will be heard for the aliens exploding as an explosion sprite animation will appear.
+
+3. Shield yourself with right mouse button (click/hold). The shield gets used up as the right mouse button is held. If you hold the shield on long enough without releasing the shield button, it will burn out, and you will have to wait a short while before you can use the shield again.  However, you can recharge the shield before it fully runs out, and it will start recharging immediately, meaning you will not have to wait for it to fully recharge for it to be usable again.
+
+4. If the player collides with an alien, they will lose a life and will have temporary invincibility. This will be indicated by the life counter decreasing, a sound effect playing, and the player's ship blinking white/red.
+
+5. If the player survives until the timer reaches 60, the player will win and will see their score! If the player loses all its lives, then the game over screen will appear, and the player loses.
+
+6. Press the SPACE bar to pause/unpause the game at any time
+
+7. Declan worked on the enemy classes and the game background. Jenny worked on the GUI. Jeff worked on the sounds, and the player class.
